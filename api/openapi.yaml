@@ -1,0 +1,2124 @@
+openapi: 3.0.0
+info:
+  description: API for interacting with the Lambda GPU Cloud
+  title: Lambda Cloud API
+  version: 1.5.1
+servers:
+- description: Production server
+  url: https://cloud.lambdalabs.com/api/v1
+- url: /api/v1
+security:
+- basicAuth: []
+- bearerAuth: []
+tags:
+- name: Instance
+- name: Key
+- name: FileSystem
+- name: SSHKey
+- name: InstanceType
+paths:
+  /instance-types:
+    get:
+      description: |
+        Returns a detailed list of the instance types offered by Lambda GPU Cloud. The details include the regions, if any, in which each instance type is currently available.
+      operationId: InstanceType_getList
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstanceTypeGetListResponse'
+          description: OK
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+          description: Unauthorized.
+          x-do-not-generate: true
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+          description: Forbidden.
+          x-do-not-generate: true
+      summary: Retrieve list of offered instance types
+      tags:
+      - InstanceType
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-get--instance-types
+      x-accepts: application/json
+  /instances:
+    get:
+      description: Retrieves a detailed list of running instances.
+      operationId: Instance_listRunningInstances
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstanceListRunningInstancesResponse'
+          description: OK
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+          description: Unauthorized.
+          x-do-not-generate: true
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+          description: Forbidden.
+          x-do-not-generate: true
+      summary: List running instances
+      tags:
+      - Instance
+      x-cli-aliases:
+      - ls
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-get--instances
+      x-accepts: application/json
+  /instances/{id}:
+    get:
+      description: |
+        Retrieves details of a specific instance, including whether or not the instance is running.
+      operationId: Instance_getDetails
+      parameters:
+      - description: The unique identifier (ID) of the instance
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/instanceId'
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstanceGetDetailsResponse'
+          description: OK
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+          description: Unauthorized.
+          x-do-not-generate: true
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+          description: Forbidden.
+          x-do-not-generate: true
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+          description: Object does not exist.
+          x-do-not-generate: true
+      summary: List details of a specific instance
+      tags:
+      - Instance
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-get--instances-id
+      x-accepts: application/json
+  /instance-operations/launch:
+    post:
+      description: Launches one or more instances of a given instance type.
+      operationId: Instance_createInstances
+      requestBody:
+        $ref: '#/components/requestBodies/launch'
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstanceCreateInstancesResponse'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+          description: Request parameters were invalid.
+          x-do-not-generate: true
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+          description: Unauthorized.
+          x-do-not-generate: true
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+          description: Forbidden.
+          x-do-not-generate: true
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+          description: Object does not exist.
+          x-do-not-generate: true
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+          description: Something unexpected occurred.
+          x-do-not-generate: true
+      summary: Launch instances
+      tags:
+      - Instance
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-post--instance-operations-launch
+      x-content-type: application/json
+      x-accepts: application/json
+  /instance-operations/terminate:
+    post:
+      description: Terminates a given instance.
+      operationId: Instance_terminateInstance
+      requestBody:
+        $ref: '#/components/requestBodies/terminate'
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstanceTerminateInstanceResponse'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+          description: Request parameters were invalid.
+          x-do-not-generate: true
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+          description: Unauthorized.
+          x-do-not-generate: true
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+          description: Forbidden.
+          x-do-not-generate: true
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+          description: Object does not exist.
+          x-do-not-generate: true
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+          description: Something unexpected occurred.
+          x-do-not-generate: true
+      summary: Terminate an instance
+      tags:
+      - Instance
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-post--instance-operations-terminate
+      x-content-type: application/json
+      x-accepts: application/json
+  /instance-operations/restart:
+    post:
+      description: Restarts the given instances.
+      operationId: Instance_restartInstances
+      requestBody:
+        $ref: '#/components/requestBodies/restart'
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstanceRestartInstancesResponse'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+          description: Request parameters were invalid.
+          x-do-not-generate: true
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+          description: Unauthorized.
+          x-do-not-generate: true
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+          description: Forbidden.
+          x-do-not-generate: true
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+          description: Object does not exist.
+          x-do-not-generate: true
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+          description: Something unexpected occurred.
+          x-do-not-generate: true
+      summary: Restart instances
+      tags:
+      - Instance
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-post--instance-operations-restart
+      x-content-type: application/json
+      x-accepts: application/json
+  /ssh-keys:
+    get:
+      description: Retrieve the list of SSH keys
+      operationId: Key_getList
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KeyGetListResponse'
+          description: OK
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+          description: Unauthorized.
+          x-do-not-generate: true
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+          description: Forbidden.
+          x-do-not-generate: true
+      summary: List SSH keys
+      tags:
+      - Key
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-get--ssh-keys
+      x-accepts: application/json
+    post:
+      description: |
+        Add an SSH key
+
+        To use an existing key pair, enter the public key for the `public_key` property of the request body.
+
+        To generate a new key pair, omit the `public_key` property from the request body. Save the `private_key` from the response somewhere secure. For example, with curl:
+
+        ```
+        curl https://cloud.lambdalabs.com/api/v1/ssh-keys \
+          --fail \
+          -u ${LAMBDA_API_KEY}: \
+          -X POST \
+          -d '{"name": "new key"}' \
+          | jq -r '.data.private_key' > key.pem
+
+        chmod 400 key.pem
+        ```
+
+        Then, after you launch an instance with `new key` attached to it:
+        ```
+        ssh -i key.pem <instance IP>
+        ```
+      operationId: Key_addSshKey
+      requestBody:
+        $ref: '#/components/requestBodies/addSSHKey'
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KeyAddSshKeyResponse'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+          description: Request parameters were invalid.
+          x-do-not-generate: true
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+          description: Unauthorized.
+          x-do-not-generate: true
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+          description: Forbidden.
+          x-do-not-generate: true
+      summary: Add SSH key
+      tags:
+      - Key
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-post--ssh-keys
+      x-content-type: application/json
+      x-accepts: application/json
+  /ssh-keys/{id}:
+    delete:
+      description: Delete an SSH key.
+      operationId: SshKey_remove
+      parameters:
+      - description: The unique identifier (ID) of the SSH key
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          $ref: '#/components/schemas/sshKeyId'
+        style: simple
+      responses:
+        "200":
+          description: Deletion successful
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+          description: Request parameters were invalid.
+          x-do-not-generate: true
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+          description: Unauthorized.
+          x-do-not-generate: true
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+          description: Forbidden.
+          x-do-not-generate: true
+      summary: Delete SSH key
+      tags:
+      - SSHKey
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-delete--ssh-keys-id
+      x-accepts: application/json
+  /file-systems:
+    get:
+      description: Retrieve the list of file systems
+      operationId: FileSystem_getList
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileSystemGetListResponse'
+          description: OK
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+          description: Unauthorized.
+          x-do-not-generate: true
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponseBody'
+          description: Forbidden.
+          x-do-not-generate: true
+      summary: List file systems
+      tags:
+      - FileSystem
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-get--file-systems
+      x-accepts: application/json
+components:
+  requestBodies:
+    launch:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InstanceCreateInstancesRequest'
+      required: true
+    terminate:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InstanceTerminateInstanceRequest'
+      required: true
+    restart:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InstanceRestartInstancesRequest'
+      required: true
+    addSSHKey:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/KeyAddSshKeyRequest'
+      required: true
+  responses:
+    unauthorized:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorResponseBody'
+      description: Unauthorized.
+      x-do-not-generate: true
+    forbidden:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorResponseBody'
+      description: Forbidden.
+      x-do-not-generate: true
+    notFound:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorResponseBody'
+      description: Object does not exist.
+      x-do-not-generate: true
+    badRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorResponseBody'
+      description: Request parameters were invalid.
+      x-do-not-generate: true
+    internalServerError:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorResponseBody'
+      description: Something unexpected occurred.
+      x-do-not-generate: true
+    instances:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InstanceListRunningInstancesResponse'
+      description: OK
+    instance:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InstanceGetDetailsResponse'
+      description: OK
+    instanceTypes:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InstanceTypeGetListResponse'
+      description: OK
+    launch:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InstanceCreateInstancesResponse'
+      description: OK
+    terminate:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InstanceTerminateInstanceResponse'
+      description: OK
+    restart:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InstanceRestartInstancesResponse'
+      description: OK
+    sshKeys:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/KeyGetListResponse'
+      description: OK
+    addSSHKey:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/KeyAddSshKeyResponse'
+      description: OK
+    fileSystems:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FileSystemGetListResponse'
+      description: OK
+  schemas:
+    errorCode:
+      description: Unique identifier for the type of error
+      enum:
+      - global/unknown
+      - global/invalid-api-key
+      - global/account-inactive
+      - global/invalid-address
+      - global/invalid-parameters
+      - global/object-does-not-exist
+      - global/quota-exceeded
+      - instance-operations/launch/insufficient-capacity
+      - instance-operations/launch/file-system-in-wrong-region
+      - instance-operations/launch/file-systems-not-supported
+      - ssh-keys/key-in-use
+      type: string
+    error:
+      properties:
+        code:
+          $ref: '#/components/schemas/errorCode'
+        message:
+          description: Detailed description of the error
+          example: "API key is invalid, expired, or deleted."
+          type: string
+          x-konfig-original-example: "API key is invalid, expired, or deleted."
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-error-properties-message
+        suggestion:
+          description: Suggestion of possible ways to fix the error.
+          example: Create a new API key and try again.
+          nullable: true
+          type: string
+          x-konfig-original-example: Create a new API key and try again.
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-error-properties-suggestion
+      required:
+      - code
+      - message
+      type: object
+    errorResponseBody:
+      properties:
+        error:
+          $ref: '#/components/schemas/error'
+        field_errors:
+          additionalProperties:
+            $ref: '#/components/schemas/error'
+          description: Details about errors on a per-parameter basis
+          type: object
+      required:
+      - error
+      type: object
+      x-konfig-is-used-in-non-successful-response: true
+      x-do-not-generate: true
+    datetime:
+      description: "A date and time, formatted as an ISO 8601 time stamp"
+      example: 2023-02-24T20:48:56+00:00
+      type: string
+      x-konfig-original-example: 2023-02-24T20:48:56+00:00
+      x-konfig-generated-schema: konfig-generated-schema-components-schemas-datetime
+    user:
+      description: Information about a user in your team
+      example:
+        id: 0920582c7ff041399e34823a0be62549
+        email: teammate@example.com
+        status: active
+      properties:
+        id:
+          description: Unique identifier for the user
+          example: 0920582c7ff041399e34823a0be62549
+          type: string
+          x-konfig-original-example: 0920582c7ff041399e34823a0be62549
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-user-properties-id
+        email:
+          description: Email address of the user
+          example: teammate@example.com
+          type: string
+          x-konfig-original-example: teammate@example.com
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-user-properties-email
+        status:
+          description: Status of the user's account
+          enum:
+          - active
+          - deactivated
+          type: string
+      required:
+      - email
+      - id
+      - status
+      type: object
+    regionName:
+      description: Short name of a region
+      example: us-tx-1
+      type: string
+      x-konfig-original-example: us-tx-1
+      x-konfig-generated-schema: konfig-generated-schema-components-schemas-regionName
+    region:
+      example:
+        name: us-tx-1
+        description: "Austin, Texas"
+      properties:
+        description:
+          description: Long name of a region
+          example: "Austin, Texas"
+          type: string
+          x-konfig-original-example: "Austin, Texas"
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-region-properties-description
+        name:
+          description: Short name of a region
+          example: us-tx-1
+          type: string
+          x-konfig-original-example: us-tx-1
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-regionName
+      required:
+      - description
+      - name
+      type: object
+    instanceId:
+      description: Unique identifier (ID) of an instance
+      example: 0920582c7ff041399e34823a0be62549
+      type: string
+      x-konfig-original-example: 0920582c7ff041399e34823a0be62549
+      x-konfig-generated-schema: konfig-generated-schema-components-schemas-instanceId
+    sshKeyId:
+      description: Unique identifier (ID) of an SSH key
+      example: 0920582c7ff041399e34823a0be62548
+      type: string
+      x-konfig-original-example: 0920582c7ff041399e34823a0be62548
+      x-konfig-generated-schema: konfig-generated-schema-components-schemas-sshKeyId
+    fileSystemId:
+      description: Unique identifier (ID) of a file system
+      example: 0920582c7ff041399e34823a0be62547
+      type: string
+      x-konfig-original-example: 0920582c7ff041399e34823a0be62547
+      x-konfig-generated-schema: konfig-generated-schema-components-schemas-fileSystemId
+    sshKeyName:
+      description: Name of the SSH key
+      example: macbook-pro
+      maxLength: 64
+      type: string
+      x-konfig-original-example: macbook-pro
+      x-konfig-generated-schema: konfig-generated-schema-components-schemas-sshKeyName
+    sshPublicKey:
+      description: Public key for the SSH key
+      example: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDfKpav4ILY54InZe27G user
+      maxLength: 4096
+      type: string
+      x-konfig-original-example: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDfKpav4ILY54InZe27G
+        user
+      x-konfig-generated-schema: konfig-generated-schema-components-schemas-sshPublicKey
+    sshPrivateKey:
+      description: Private key for the SSH key. Only returned when generating a new
+        key pair.
+      example: |
+        -----BEGIN RSA PRIVATE KEY-----
+        MIIEpQIBAAKCAQEA5IGybv8/wdQM6Y4yYTGiEem4TscBZiAW+9xyW2pDt8S7VDtm
+        ...
+        eCW4938W9u8N3R/kpGwi1tZYiGMLBU4Ks0qKFi/VeEaE9OLeP5WQ8Pk=
+        -----END RSA PRIVATE KEY-----
+      nullable: true
+      type: string
+      x-konfig-original-example: |
+        -----BEGIN RSA PRIVATE KEY-----
+        MIIEpQIBAAKCAQEA5IGybv8/wdQM6Y4yYTGiEem4TscBZiAW+9xyW2pDt8S7VDtm
+        ...
+        eCW4938W9u8N3R/kpGwi1tZYiGMLBU4Ks0qKFi/VeEaE9OLeP5WQ8Pk=
+        -----END RSA PRIVATE KEY-----
+      x-konfig-generated-schema: konfig-generated-schema-components-schemas-sshPrivateKey
+    sshKey:
+      description: "Information about a stored SSH key, which can be used to access\
+        \ instances over SSH"
+      example:
+        public_key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDfKpav4ILY54InZe27G user
+        name: macbook-pro
+        private_key: |
+          -----BEGIN RSA PRIVATE KEY-----
+          MIIEpQIBAAKCAQEA5IGybv8/wdQM6Y4yYTGiEem4TscBZiAW+9xyW2pDt8S7VDtm
+          ...
+          eCW4938W9u8N3R/kpGwi1tZYiGMLBU4Ks0qKFi/VeEaE9OLeP5WQ8Pk=
+          -----END RSA PRIVATE KEY-----
+        id: 0920582c7ff041399e34823a0be62548
+      properties:
+        id:
+          description: Unique identifier (ID) of an SSH key
+          example: 0920582c7ff041399e34823a0be62548
+          type: string
+          x-konfig-original-example: 0920582c7ff041399e34823a0be62548
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-sshKeyId
+        name:
+          description: Name of the SSH key
+          example: macbook-pro
+          maxLength: 64
+          type: string
+          x-konfig-original-example: macbook-pro
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-sshKeyName
+        public_key:
+          description: Public key for the SSH key
+          example: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDfKpav4ILY54InZe27G user
+          maxLength: 4096
+          type: string
+          x-konfig-original-example: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDfKpav4ILY54InZe27G
+            user
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-sshPublicKey
+        private_key:
+          description: Private key for the SSH key. Only returned when generating
+            a new key pair.
+          example: |
+            -----BEGIN RSA PRIVATE KEY-----
+            MIIEpQIBAAKCAQEA5IGybv8/wdQM6Y4yYTGiEem4TscBZiAW+9xyW2pDt8S7VDtm
+            ...
+            eCW4938W9u8N3R/kpGwi1tZYiGMLBU4Ks0qKFi/VeEaE9OLeP5WQ8Pk=
+            -----END RSA PRIVATE KEY-----
+          nullable: true
+          type: string
+          x-konfig-original-example: |
+            -----BEGIN RSA PRIVATE KEY-----
+            MIIEpQIBAAKCAQEA5IGybv8/wdQM6Y4yYTGiEem4TscBZiAW+9xyW2pDt8S7VDtm
+            ...
+            eCW4938W9u8N3R/kpGwi1tZYiGMLBU4Ks0qKFi/VeEaE9OLeP5WQ8Pk=
+            -----END RSA PRIVATE KEY-----
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-sshPrivateKey
+      required:
+      - id
+      - name
+      - public_key
+      type: object
+    fileSystemName:
+      description: Name of a file system
+      example: shared-fs
+      type: string
+      x-konfig-original-example: shared-fs
+      x-konfig-generated-schema: konfig-generated-schema-components-schemas-fileSystemName
+    fileSystem:
+      description: Information about a shared file system
+      example:
+        is_in_use: true
+        bytes_used: 2147483648
+        created: 2023-02-24T20:48:56+00:00
+        mount_point: /home/ubuntu/shared-fs
+        name: shared-fs
+        id: 0920582c7ff041399e34823a0be62547
+        region:
+          name: us-tx-1
+          description: "Austin, Texas"
+        created_by:
+          id: 0920582c7ff041399e34823a0be62549
+          email: teammate@example.com
+          status: active
+      properties:
+        id:
+          description: Unique identifier (ID) of a file system
+          example: 0920582c7ff041399e34823a0be62547
+          type: string
+          x-konfig-original-example: 0920582c7ff041399e34823a0be62547
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-fileSystemId
+        name:
+          description: Name of a file system
+          example: shared-fs
+          type: string
+          x-konfig-original-example: shared-fs
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-fileSystemName
+        created:
+          description: "A date and time, formatted as an ISO 8601 time stamp"
+          example: 2023-02-24T20:48:56+00:00
+          type: string
+          x-konfig-original-example: 2023-02-24T20:48:56+00:00
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-datetime
+        created_by:
+          $ref: '#/components/schemas/user'
+        mount_point:
+          description: Absolute path indicating where on instances the file system
+            will be mounted
+          example: /home/ubuntu/shared-fs
+          type: string
+          x-konfig-original-example: /home/ubuntu/shared-fs
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-fileSystem-properties-mount_point
+        region:
+          $ref: '#/components/schemas/region'
+        is_in_use:
+          description: Whether the file system is currently in use by an instance.
+            File systems that are in use cannot be deleted.
+          type: boolean
+        bytes_used:
+          description: "Approximate amount of storage used by the file system, in\
+            \ bytes. This value is an estimate that is updated every several hours."
+          example: 2147483648
+          type: integer
+          x-konfig-original-example: 2147483648
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-fileSystem-properties-bytes_used
+      required:
+      - created
+      - created_by
+      - id
+      - is_in_use
+      - mount_point
+      - name
+      - region
+      type: object
+    instanceTypeName:
+      description: Name of an instance type
+      example: gpu_1x_a100
+      type: string
+      x-konfig-original-example: gpu_1x_a100
+      x-konfig-generated-schema: konfig-generated-schema-components-schemas-instanceTypeName
+    instanceName:
+      description: User-provided name for the instance
+      example: training-node-1
+      maxLength: 64
+      minLength: 1
+      nullable: true
+      type: string
+      x-konfig-original-example: training-node-1
+      x-konfig-generated-schema: konfig-generated-schema-components-schemas-instanceName
+    instanceType:
+      description: Hardware configuration and pricing of an instance type
+      example:
+        specs:
+          memory_gib: 800
+          vcpus: 24
+          storage_gib: 512
+        name: gpu_1x_a100
+        description: 1x RTX A100 (24 GB)
+        price_cents_per_hour: 110
+      properties:
+        description:
+          description: Long name of the instance type
+          example: 1x RTX A100 (24 GB)
+          type: string
+          x-konfig-original-example: 1x RTX A100 (24 GB)
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-instanceType-properties-description
+        name:
+          description: Name of an instance type
+          example: gpu_1x_a100
+          type: string
+          x-konfig-original-example: gpu_1x_a100
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-instanceTypeName
+        price_cents_per_hour:
+          description: "Price of the instance type, in US cents per hour"
+          example: 110
+          type: integer
+          x-konfig-original-example: 110
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-instanceType-properties-price_cents_per_hour
+        specs:
+          $ref: '#/components/schemas/instanceType_specs'
+      required:
+      - description
+      - name
+      - price_cents_per_hour
+      - specs
+      type: object
+    instance:
+      description: Virtual machine (VM) in Lambda Cloud
+      example:
+        hostname: 10-0-8-196.cloud.lambdalabs.com
+        file_system_names:
+        - shared-fs
+        - shared-fs
+        ip: 10.10.10.1
+        name: training-node-1
+        id: 0920582c7ff041399e34823a0be62549
+        region:
+          name: us-tx-1
+          description: "Austin, Texas"
+        jupyter_url: https://jupyter-3ac4c5c6-9026-47d2-9a33-71efccbcd0ee.lambdaspaces.com/?token=53968f128c4a4489b688c2c0a181d083
+        instance_type:
+          specs:
+            memory_gib: 800
+            vcpus: 24
+            storage_gib: 512
+          name: gpu_1x_a100
+          description: 1x RTX A100 (24 GB)
+          price_cents_per_hour: 110
+        status: active
+        ssh_key_names:
+        - macbook-pro
+        - macbook-pro
+        jupyter_token: 53968f128c4a4489b688c2c0a181d083
+      properties:
+        id:
+          description: Unique identifier (ID) of an instance
+          example: 0920582c7ff041399e34823a0be62549
+          type: string
+          x-konfig-original-example: 0920582c7ff041399e34823a0be62549
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-instanceId
+        name:
+          description: User-provided name for the instance
+          example: training-node-1
+          maxLength: 64
+          minLength: 1
+          nullable: true
+          type: string
+          x-konfig-original-example: training-node-1
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-instanceName
+        ip:
+          description: IPv4 address of the instance
+          example: 10.10.10.1
+          nullable: true
+          type: string
+          x-konfig-original-example: 10.10.10.1
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-instance-properties-ip
+        status:
+          description: The current status of the instance
+          enum:
+          - active
+          - booting
+          - unhealthy
+          - terminating
+          - terminated
+          type: string
+        ssh_key_names:
+          description: Names of the SSH keys allowed to access the instance
+          items:
+            $ref: '#/components/schemas/sshKeyName'
+          type: array
+        file_system_names:
+          description: "Names of the file systems, if any, attached to the instance"
+          items:
+            $ref: '#/components/schemas/fileSystemName'
+          type: array
+        region:
+          $ref: '#/components/schemas/region'
+        instance_type:
+          $ref: '#/components/schemas/instanceType'
+        hostname:
+          description: "Hostname assigned to this instance, which resolves to the\
+            \ instance's IP."
+          example: 10-0-8-196.cloud.lambdalabs.com
+          nullable: true
+          type: string
+          x-konfig-original-example: 10-0-8-196.cloud.lambdalabs.com
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-instance-properties-hostname
+        jupyter_token:
+          description: Secret token used to log into the jupyter lab server hosted
+            on the instance.
+          example: 53968f128c4a4489b688c2c0a181d083
+          nullable: true
+          type: string
+          x-konfig-original-example: 53968f128c4a4489b688c2c0a181d083
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-instance-properties-jupyter_token
+        jupyter_url:
+          description: URL that opens a jupyter lab notebook on the instance.
+          example: https://jupyter-3ac4c5c6-9026-47d2-9a33-71efccbcd0ee.lambdaspaces.com/?token=53968f128c4a4489b688c2c0a181d083
+          nullable: true
+          type: string
+          x-konfig-original-example: https://jupyter-3ac4c5c6-9026-47d2-9a33-71efccbcd0ee.lambdaspaces.com/?token=53968f128c4a4489b688c2c0a181d083
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-instance-properties-jupyter_url
+      required:
+      - file_system_names
+      - id
+      - ssh_key_names
+      - status
+      type: object
+    InstanceCreateInstancesRequest:
+      example:
+        quantity: 1
+        file_system_names:
+        - shared-fs
+        name: training-node-1
+        region_name: us-tx-1
+        instance_type_name: gpu_1x_a100
+        ssh_key_names:
+        - macbook-pro
+      properties:
+        region_name:
+          description: Short name of a region
+          example: us-tx-1
+          type: string
+          x-konfig-original-example: us-tx-1
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-regionName
+        instance_type_name:
+          description: Name of an instance type
+          example: gpu_1x_a100
+          type: string
+          x-konfig-original-example: gpu_1x_a100
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-instanceTypeName
+        ssh_key_names:
+          description: "Names of the SSH keys to allow access to the instances. Currently,\
+            \ exactly one SSH key must be specified."
+          items:
+            $ref: '#/components/schemas/sshKeyName'
+          maxItems: 1
+          minItems: 1
+          type: array
+        file_system_names:
+          description: "Names of the file systems to attach to the instances. Currently,\
+            \ only one (if any) file system may be specified."
+          items:
+            $ref: '#/components/schemas/fileSystemName'
+          maxItems: 1
+          type: array
+        quantity:
+          default: 1
+          description: Number of instances to launch
+          example: 1
+          maximum: 1
+          minimum: 1
+          type: integer
+          x-konfig-original-example: 1
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-InstanceCreateInstancesRequest-properties-quantity
+        name:
+          description: User-provided name for the instance
+          example: training-node-1
+          maxLength: 64
+          minLength: 1
+          nullable: true
+          type: string
+          x-konfig-original-example: training-node-1
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-instanceName
+      required:
+      - instance_type_name
+      - region_name
+      - ssh_key_names
+      type: object
+    InstanceTerminateInstanceRequest:
+      example:
+        instance_ids:
+        - 0920582c7ff041399e34823a0be62549
+        - 0920582c7ff041399e34823a0be62549
+      properties:
+        instance_ids:
+          description: The unique identifiers (IDs) of the instances to terminate
+          items:
+            $ref: '#/components/schemas/instanceId'
+          type: array
+      required:
+      - instance_ids
+      type: object
+    InstanceRestartInstancesRequest:
+      example:
+        instance_ids:
+        - 0920582c7ff041399e34823a0be62549
+        - 0920582c7ff041399e34823a0be62549
+      properties:
+        instance_ids:
+          description: The unique identifiers (IDs) of the instances to restart
+          items:
+            $ref: '#/components/schemas/instanceId'
+          type: array
+      required:
+      - instance_ids
+      type: object
+    KeyAddSshKeyRequest:
+      description: "The name for the SSH key. Optionally, an existing public key can\
+        \ be supplied for the `public_key` property. If the `public_key` property\
+        \ is omitted, a new key pair is generated. The private key is returned in\
+        \ the response."
+      example:
+        name: newly-generated-key
+      properties:
+        name:
+          description: Name of the SSH key
+          example: macbook-pro
+          maxLength: 64
+          type: string
+          x-konfig-original-example: macbook-pro
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-sshKeyName
+        public_key:
+          description: Public key for the SSH key
+          example: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDfKpav4ILY54InZe27G user
+          maxLength: 4096
+          type: string
+          x-konfig-original-example: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDfKpav4ILY54InZe27G
+            user
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-sshPublicKey
+      required:
+      - name
+      type: object
+      x-konfig-original-example:
+        name: newly-generated-key
+      x-konfig-generated-schema: konfig-generated-schema-components-schemas-KeyAddSshKeyRequest
+    InstanceTypeGetListResponse:
+      example:
+        data:
+          gpu_1x_a100:
+            instance_type:
+              description: 1x RTX A100 (24 GB)
+              name: gpu_1x_a100
+              price_cents_per_hour: "80"
+              specs:
+                vcpus: 24
+                memory_gib: 800
+                storage_gib: 512
+            regions_with_capacity_available:
+            - description: "Austin, Texas"
+              name: us-tx-1
+          gpu_4x_a6000:
+            instance_type:
+              description: 4x RTX 6000 (24 GB)
+              name: gpu_4x_a6000
+              price_cents_per_hour: "110"
+              specs:
+                vcpus: 24
+                memory_gib: 800
+                storage_gib: 512
+            regions_with_capacity_available:
+            - description: "Phoenix, Arizona"
+              name: us-az-1
+      properties:
+        data:
+          additionalProperties:
+            $ref: '#/components/schemas/InstanceTypeGetListResponse_data_value'
+          description: Dict of instance_type_name to instance_type and region availability.
+          example:
+            gpu_1x_a100:
+              instance_type:
+                description: 1x RTX A100 (24 GB)
+                name: gpu_1x_a100
+                price_cents_per_hour: "80"
+                specs:
+                  vcpus: 24
+                  memory_gib: 800
+                  storage_gib: 512
+              regions_with_capacity_available:
+              - description: "Austin, Texas"
+                name: us-tx-1
+            gpu_4x_a6000:
+              instance_type:
+                description: 4x RTX 6000 (24 GB)
+                name: gpu_4x_a6000
+                price_cents_per_hour: "110"
+                specs:
+                  vcpus: 24
+                  memory_gib: 800
+                  storage_gib: 512
+              regions_with_capacity_available:
+              - description: "Phoenix, Arizona"
+                name: us-az-1
+          type: object
+          x-konfig-original-example:
+            gpu_1x_a100:
+              instance_type:
+                description: 1x RTX A100 (24 GB)
+                name: gpu_1x_a100
+                price_cents_per_hour: "80"
+                specs:
+                  vcpus: 24
+                  memory_gib: 800
+                  storage_gib: 512
+              regions_with_capacity_available:
+              - description: "Austin, Texas"
+                name: us-tx-1
+            gpu_4x_a6000:
+              instance_type:
+                description: 4x RTX 6000 (24 GB)
+                name: gpu_4x_a6000
+                price_cents_per_hour: "110"
+                specs:
+                  vcpus: 24
+                  memory_gib: 800
+                  storage_gib: 512
+              regions_with_capacity_available:
+              - description: "Phoenix, Arizona"
+                name: us-az-1
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-InstanceTypeGetListResponse-properties-data
+      required:
+      - data
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    InstanceListRunningInstancesResponse:
+      example:
+        data:
+        - hostname: 10-0-8-196.cloud.lambdalabs.com
+          file_system_names:
+          - shared-fs
+          - shared-fs
+          ip: 10.10.10.1
+          name: training-node-1
+          id: 0920582c7ff041399e34823a0be62549
+          region:
+            name: us-tx-1
+            description: "Austin, Texas"
+          jupyter_url: https://jupyter-3ac4c5c6-9026-47d2-9a33-71efccbcd0ee.lambdaspaces.com/?token=53968f128c4a4489b688c2c0a181d083
+          instance_type:
+            specs:
+              memory_gib: 800
+              vcpus: 24
+              storage_gib: 512
+            name: gpu_1x_a100
+            description: 1x RTX A100 (24 GB)
+            price_cents_per_hour: 110
+          status: active
+          ssh_key_names:
+          - macbook-pro
+          - macbook-pro
+          jupyter_token: 53968f128c4a4489b688c2c0a181d083
+        - hostname: 10-0-8-196.cloud.lambdalabs.com
+          file_system_names:
+          - shared-fs
+          - shared-fs
+          ip: 10.10.10.1
+          name: training-node-1
+          id: 0920582c7ff041399e34823a0be62549
+          region:
+            name: us-tx-1
+            description: "Austin, Texas"
+          jupyter_url: https://jupyter-3ac4c5c6-9026-47d2-9a33-71efccbcd0ee.lambdaspaces.com/?token=53968f128c4a4489b688c2c0a181d083
+          instance_type:
+            specs:
+              memory_gib: 800
+              vcpus: 24
+              storage_gib: 512
+            name: gpu_1x_a100
+            description: 1x RTX A100 (24 GB)
+            price_cents_per_hour: 110
+          status: active
+          ssh_key_names:
+          - macbook-pro
+          - macbook-pro
+          jupyter_token: 53968f128c4a4489b688c2c0a181d083
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/instance'
+          type: array
+      required:
+      - data
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    InstanceGetDetailsResponse:
+      example:
+        data:
+          hostname: 10-0-8-196.cloud.lambdalabs.com
+          file_system_names:
+          - shared-fs
+          - shared-fs
+          ip: 10.10.10.1
+          name: training-node-1
+          id: 0920582c7ff041399e34823a0be62549
+          region:
+            name: us-tx-1
+            description: "Austin, Texas"
+          jupyter_url: https://jupyter-3ac4c5c6-9026-47d2-9a33-71efccbcd0ee.lambdaspaces.com/?token=53968f128c4a4489b688c2c0a181d083
+          instance_type:
+            specs:
+              memory_gib: 800
+              vcpus: 24
+              storage_gib: 512
+            name: gpu_1x_a100
+            description: 1x RTX A100 (24 GB)
+            price_cents_per_hour: 110
+          status: active
+          ssh_key_names:
+          - macbook-pro
+          - macbook-pro
+          jupyter_token: 53968f128c4a4489b688c2c0a181d083
+      properties:
+        data:
+          $ref: '#/components/schemas/instance'
+      required:
+      - data
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    InstanceCreateInstancesResponse:
+      example:
+        data:
+          instance_ids:
+          - 0920582c7ff041399e34823a0be62549
+          - 0920582c7ff041399e34823a0be62549
+      properties:
+        data:
+          $ref: '#/components/schemas/InstanceCreateInstancesResponse_data'
+      required:
+      - data
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    InstanceTerminateInstanceResponse:
+      example:
+        data:
+          terminated_instances:
+          - hostname: 10-0-8-196.cloud.lambdalabs.com
+            file_system_names:
+            - shared-fs
+            - shared-fs
+            ip: 10.10.10.1
+            name: training-node-1
+            id: 0920582c7ff041399e34823a0be62549
+            region:
+              name: us-tx-1
+              description: "Austin, Texas"
+            jupyter_url: https://jupyter-3ac4c5c6-9026-47d2-9a33-71efccbcd0ee.lambdaspaces.com/?token=53968f128c4a4489b688c2c0a181d083
+            instance_type:
+              specs:
+                memory_gib: 800
+                vcpus: 24
+                storage_gib: 512
+              name: gpu_1x_a100
+              description: 1x RTX A100 (24 GB)
+              price_cents_per_hour: 110
+            status: active
+            ssh_key_names:
+            - macbook-pro
+            - macbook-pro
+            jupyter_token: 53968f128c4a4489b688c2c0a181d083
+          - hostname: 10-0-8-196.cloud.lambdalabs.com
+            file_system_names:
+            - shared-fs
+            - shared-fs
+            ip: 10.10.10.1
+            name: training-node-1
+            id: 0920582c7ff041399e34823a0be62549
+            region:
+              name: us-tx-1
+              description: "Austin, Texas"
+            jupyter_url: https://jupyter-3ac4c5c6-9026-47d2-9a33-71efccbcd0ee.lambdaspaces.com/?token=53968f128c4a4489b688c2c0a181d083
+            instance_type:
+              specs:
+                memory_gib: 800
+                vcpus: 24
+                storage_gib: 512
+              name: gpu_1x_a100
+              description: 1x RTX A100 (24 GB)
+              price_cents_per_hour: 110
+            status: active
+            ssh_key_names:
+            - macbook-pro
+            - macbook-pro
+            jupyter_token: 53968f128c4a4489b688c2c0a181d083
+      properties:
+        data:
+          $ref: '#/components/schemas/InstanceTerminateInstanceResponse_data'
+      required:
+      - data
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    InstanceRestartInstancesResponse:
+      example:
+        data:
+          restarted_instances:
+          - hostname: 10-0-8-196.cloud.lambdalabs.com
+            file_system_names:
+            - shared-fs
+            - shared-fs
+            ip: 10.10.10.1
+            name: training-node-1
+            id: 0920582c7ff041399e34823a0be62549
+            region:
+              name: us-tx-1
+              description: "Austin, Texas"
+            jupyter_url: https://jupyter-3ac4c5c6-9026-47d2-9a33-71efccbcd0ee.lambdaspaces.com/?token=53968f128c4a4489b688c2c0a181d083
+            instance_type:
+              specs:
+                memory_gib: 800
+                vcpus: 24
+                storage_gib: 512
+              name: gpu_1x_a100
+              description: 1x RTX A100 (24 GB)
+              price_cents_per_hour: 110
+            status: active
+            ssh_key_names:
+            - macbook-pro
+            - macbook-pro
+            jupyter_token: 53968f128c4a4489b688c2c0a181d083
+          - hostname: 10-0-8-196.cloud.lambdalabs.com
+            file_system_names:
+            - shared-fs
+            - shared-fs
+            ip: 10.10.10.1
+            name: training-node-1
+            id: 0920582c7ff041399e34823a0be62549
+            region:
+              name: us-tx-1
+              description: "Austin, Texas"
+            jupyter_url: https://jupyter-3ac4c5c6-9026-47d2-9a33-71efccbcd0ee.lambdaspaces.com/?token=53968f128c4a4489b688c2c0a181d083
+            instance_type:
+              specs:
+                memory_gib: 800
+                vcpus: 24
+                storage_gib: 512
+              name: gpu_1x_a100
+              description: 1x RTX A100 (24 GB)
+              price_cents_per_hour: 110
+            status: active
+            ssh_key_names:
+            - macbook-pro
+            - macbook-pro
+            jupyter_token: 53968f128c4a4489b688c2c0a181d083
+      properties:
+        data:
+          $ref: '#/components/schemas/InstanceRestartInstancesResponse_data'
+      required:
+      - data
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    KeyGetListResponse:
+      example:
+        data:
+        - public_key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDfKpav4ILY54InZe27G user
+          name: macbook-pro
+          private_key: |
+            -----BEGIN RSA PRIVATE KEY-----
+            MIIEpQIBAAKCAQEA5IGybv8/wdQM6Y4yYTGiEem4TscBZiAW+9xyW2pDt8S7VDtm
+            ...
+            eCW4938W9u8N3R/kpGwi1tZYiGMLBU4Ks0qKFi/VeEaE9OLeP5WQ8Pk=
+            -----END RSA PRIVATE KEY-----
+          id: 0920582c7ff041399e34823a0be62548
+        - public_key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDfKpav4ILY54InZe27G user
+          name: macbook-pro
+          private_key: |
+            -----BEGIN RSA PRIVATE KEY-----
+            MIIEpQIBAAKCAQEA5IGybv8/wdQM6Y4yYTGiEem4TscBZiAW+9xyW2pDt8S7VDtm
+            ...
+            eCW4938W9u8N3R/kpGwi1tZYiGMLBU4Ks0qKFi/VeEaE9OLeP5WQ8Pk=
+            -----END RSA PRIVATE KEY-----
+          id: 0920582c7ff041399e34823a0be62548
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/sshKey'
+          type: array
+      required:
+      - data
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    KeyAddSshKeyResponse:
+      description: "The added or generated SSH public key. If a new key pair was generated,\
+        \ the response body contains a `private_key` property that *must* be saved\
+        \ locally. Lambda Cloud does not store private keys."
+      example:
+        data:
+          id: 0920582c7ff041399e34823a0be62548
+          name: newly-generated-key
+          public_key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDfKpav4ILY54InZe27G user
+          private_key: |
+            -----BEGIN RSA PRIVATE KEY-----
+            KEY CONTENT-----END RSA PRIVATE KEY-----
+      properties:
+        data:
+          $ref: '#/components/schemas/sshKey'
+      required:
+      - data
+      type: object
+      x-konfig-original-example:
+        data:
+          id: 0920582c7ff041399e34823a0be62548
+          name: newly-generated-key
+          public_key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDfKpav4ILY54InZe27G user
+          private_key: |
+            -----BEGIN RSA PRIVATE KEY-----
+            KEY CONTENT-----END RSA PRIVATE KEY-----
+      x-konfig-generated-schema: konfig-generated-schema-components-schemas-KeyAddSshKeyResponse
+      x-konfig-is-used-in-successful-response: true
+    FileSystemGetListResponse:
+      example:
+        data:
+        - is_in_use: true
+          bytes_used: 2147483648
+          created: 2023-02-24T20:48:56+00:00
+          mount_point: /home/ubuntu/shared-fs
+          name: shared-fs
+          id: 0920582c7ff041399e34823a0be62547
+          region:
+            name: us-tx-1
+            description: "Austin, Texas"
+          created_by:
+            id: 0920582c7ff041399e34823a0be62549
+            email: teammate@example.com
+            status: active
+        - is_in_use: true
+          bytes_used: 2147483648
+          created: 2023-02-24T20:48:56+00:00
+          mount_point: /home/ubuntu/shared-fs
+          name: shared-fs
+          id: 0920582c7ff041399e34823a0be62547
+          region:
+            name: us-tx-1
+            description: "Austin, Texas"
+          created_by:
+            id: 0920582c7ff041399e34823a0be62549
+            email: teammate@example.com
+            status: active
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/fileSystem'
+          type: array
+      required:
+      - data
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    konfig-generated-schema-components-schemas-error-properties-message:
+      example: "API key is invalid, expired, or deleted."
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-error-properties-suggestion:
+      example: Create a new API key and try again.
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-datetime:
+      example: 2023-02-24T20:48:56+00:00
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-user-properties-id:
+      example: 0920582c7ff041399e34823a0be62549
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-user-properties-email:
+      example: teammate@example.com
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-regionName:
+      example: us-tx-1
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-region-properties-description:
+      example: "Austin, Texas"
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-instanceId:
+      example: 0920582c7ff041399e34823a0be62549
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-sshKeyId:
+      example: 0920582c7ff041399e34823a0be62548
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-fileSystemId:
+      example: 0920582c7ff041399e34823a0be62547
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-sshKeyName:
+      example: macbook-pro
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-sshPublicKey:
+      example: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDfKpav4ILY54InZe27G user
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-sshPrivateKey:
+      example: |
+        -----BEGIN RSA PRIVATE KEY-----
+        MIIEpQIBAAKCAQEA5IGybv8/wdQM6Y4yYTGiEem4TscBZiAW+9xyW2pDt8S7VDtm
+        ...
+        eCW4938W9u8N3R/kpGwi1tZYiGMLBU4Ks0qKFi/VeEaE9OLeP5WQ8Pk=
+        -----END RSA PRIVATE KEY-----
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-fileSystemName:
+      example: shared-fs
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-fileSystem-properties-mount_point:
+      example: /home/ubuntu/shared-fs
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-fileSystem-properties-bytes_used:
+      example: 2147483648
+      type: number
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-instanceTypeName:
+      example: gpu_1x_a100
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-instanceName:
+      example: training-node-1
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-instanceType-properties-description:
+      example: 1x RTX A100 (24 GB)
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-instanceType-properties-price_cents_per_hour:
+      example: 110
+      type: number
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-instanceType-properties-specs-properties-vcpus:
+      example: 24
+      type: number
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-instanceType-properties-specs-properties-memory_gib:
+      example: 800
+      type: number
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-instanceType-properties-specs-properties-storage_gib:
+      example: 512
+      type: number
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-instance-properties-ip:
+      example: 10.10.10.1
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-instance-properties-hostname:
+      example: 10-0-8-196.cloud.lambdalabs.com
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-instance-properties-jupyter_token:
+      example: 53968f128c4a4489b688c2c0a181d083
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-instance-properties-jupyter_url:
+      example: https://jupyter-3ac4c5c6-9026-47d2-9a33-71efccbcd0ee.lambdaspaces.com/?token=53968f128c4a4489b688c2c0a181d083
+      type: string
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-InstanceCreateInstancesRequest-properties-quantity:
+      example: 1
+      type: number
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-KeyAddSshKeyRequest:
+      example:
+        name: newly-generated-key
+      properties:
+        name:
+          example: newly-generated-key
+          type: string
+      type: object
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-InstanceTypeGetListResponse-properties-data:
+      example:
+        gpu_1x_a100:
+          instance_type:
+            description: 1x RTX A100 (24 GB)
+            name: gpu_1x_a100
+            price_cents_per_hour: "80"
+            specs:
+              vcpus: 24
+              memory_gib: 800
+              storage_gib: 512
+          regions_with_capacity_available:
+          - description: "Austin, Texas"
+            name: us-tx-1
+        gpu_4x_a6000:
+          instance_type:
+            description: 4x RTX 6000 (24 GB)
+            name: gpu_4x_a6000
+            price_cents_per_hour: "110"
+            specs:
+              vcpus: 24
+              memory_gib: 800
+              storage_gib: 512
+          regions_with_capacity_available:
+          - description: "Phoenix, Arizona"
+            name: us-az-1
+      properties:
+        gpu_1x_a100:
+          properties:
+            instance_type:
+              properties:
+                description:
+                  example: 1x RTX A100 (24 GB)
+                  type: string
+                name:
+                  example: gpu_1x_a100
+                  type: string
+                price_cents_per_hour:
+                  example: "80"
+                  type: string
+                specs:
+                  properties:
+                    vcpus:
+                      example: 24
+                      type: number
+                    memory_gib:
+                      example: 800
+                      type: number
+                    storage_gib:
+                      example: 512
+                      type: number
+                  type: object
+              type: object
+            regions_with_capacity_available:
+              items:
+                properties:
+                  description:
+                    example: "Austin, Texas"
+                    type: string
+                  name:
+                    example: us-tx-1
+                    type: string
+                type: object
+              type: array
+          type: object
+        gpu_4x_a6000:
+          properties:
+            instance_type:
+              properties:
+                description:
+                  example: 4x RTX 6000 (24 GB)
+                  type: string
+                name:
+                  example: gpu_4x_a6000
+                  type: string
+                price_cents_per_hour:
+                  example: "110"
+                  type: string
+                specs:
+                  properties:
+                    vcpus:
+                      example: 24
+                      type: number
+                    memory_gib:
+                      example: 800
+                      type: number
+                    storage_gib:
+                      example: 512
+                      type: number
+                  type: object
+              type: object
+            regions_with_capacity_available:
+              items:
+                properties:
+                  description:
+                    example: "Phoenix, Arizona"
+                    type: string
+                  name:
+                    example: us-az-1
+                    type: string
+                type: object
+              type: array
+          type: object
+      type: object
+      x-do-not-generate: true
+    konfig-generated-schema-components-schemas-KeyAddSshKeyResponse:
+      example:
+        data:
+          id: 0920582c7ff041399e34823a0be62548
+          name: newly-generated-key
+          public_key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDfKpav4ILY54InZe27G user
+          private_key: |
+            -----BEGIN RSA PRIVATE KEY-----
+            KEY CONTENT-----END RSA PRIVATE KEY-----
+      properties:
+        data:
+          properties:
+            id:
+              example: 0920582c7ff041399e34823a0be62548
+              type: string
+            name:
+              example: newly-generated-key
+              type: string
+            public_key:
+              example: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDfKpav4ILY54InZe27G user
+              type: string
+            private_key:
+              example: |
+                -----BEGIN RSA PRIVATE KEY-----
+                KEY CONTENT-----END RSA PRIVATE KEY-----
+              type: string
+          type: object
+      type: object
+      x-do-not-generate: true
+    konfig-generated-schema-single-parameter-schema-get--instance-types:
+      properties: {}
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter: []
+    konfig-generated-schema-single-parameter-schema-get--instances:
+      properties: {}
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter: []
+    konfig-generated-schema-single-parameter-schema-get--instances-id:
+      properties:
+        id:
+          $ref: '#/components/schemas/instanceId'
+      required:
+      - id
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - id
+    konfig-generated-schema-single-parameter-schema-post--instance-operations-launch:
+      properties:
+        region_name:
+          $ref: '#/components/schemas/regionName'
+        instance_type_name:
+          $ref: '#/components/schemas/instanceTypeName'
+        ssh_key_names:
+          description: "Names of the SSH keys to allow access to the instances. Currently,\
+            \ exactly one SSH key must be specified."
+          items:
+            $ref: '#/components/schemas/sshKeyName'
+          maxItems: 1
+          minItems: 1
+          type: array
+        file_system_names:
+          description: "Names of the file systems to attach to the instances. Currently,\
+            \ only one (if any) file system may be specified."
+          items:
+            $ref: '#/components/schemas/fileSystemName'
+          maxItems: 1
+          type: array
+        quantity:
+          default: 1
+          description: Number of instances to launch
+          example: 1
+          maximum: 1
+          minimum: 1
+          type: integer
+          x-konfig-original-example: 1
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-InstanceCreateInstancesRequest-properties-quantity
+        name:
+          $ref: '#/components/schemas/instanceName'
+      required:
+      - instance_type_name
+      - region_name
+      - ssh_key_names
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter: []
+    konfig-generated-schema-single-parameter-schema-post--instance-operations-terminate:
+      properties:
+        instance_ids:
+          description: The unique identifiers (IDs) of the instances to terminate
+          items:
+            $ref: '#/components/schemas/instanceId'
+          type: array
+      required:
+      - instance_ids
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter: []
+    konfig-generated-schema-single-parameter-schema-post--instance-operations-restart:
+      properties:
+        instance_ids:
+          description: The unique identifiers (IDs) of the instances to restart
+          items:
+            $ref: '#/components/schemas/instanceId'
+          type: array
+      required:
+      - instance_ids
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter: []
+    konfig-generated-schema-single-parameter-schema-get--ssh-keys:
+      properties: {}
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter: []
+    konfig-generated-schema-single-parameter-schema-post--ssh-keys:
+      properties:
+        name:
+          $ref: '#/components/schemas/sshKeyName'
+        public_key:
+          $ref: '#/components/schemas/sshPublicKey'
+      required:
+      - name
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter: []
+    konfig-generated-schema-single-parameter-schema-delete--ssh-keys-id:
+      properties:
+        id:
+          $ref: '#/components/schemas/sshKeyId'
+      required:
+      - id
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - id
+    konfig-generated-schema-single-parameter-schema-get--file-systems:
+      properties: {}
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter: []
+    instanceType_specs:
+      example:
+        memory_gib: 800
+        vcpus: 24
+        storage_gib: 512
+      properties:
+        vcpus:
+          description: Number of virtual CPUs
+          example: 24
+          type: integer
+          x-konfig-original-example: 24
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-instanceType-properties-specs-properties-vcpus
+        memory_gib:
+          description: "Amount of RAM, in gibibytes (GiB)"
+          example: 800
+          type: integer
+          x-konfig-original-example: 800
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-instanceType-properties-specs-properties-memory_gib
+        storage_gib:
+          description: "Amount of storage, in gibibytes (GiB)."
+          example: 512
+          type: integer
+          x-konfig-original-example: 512
+          x-konfig-generated-schema: konfig-generated-schema-components-schemas-instanceType-properties-specs-properties-storage_gib
+      required:
+      - memory_gib
+      - storage_gib
+      - vcpus
+      type: object
+    InstanceTypeGetListResponse_data_value:
+      properties:
+        instance_type:
+          $ref: '#/components/schemas/instanceType'
+        regions_with_capacity_available:
+          description: "List of regions, if any, that have this instance type available"
+          items:
+            $ref: '#/components/schemas/region'
+          type: array
+      required:
+      - instance_type
+      - regions_with_capacity_available
+      type: object
+    InstanceCreateInstancesResponse_data:
+      example:
+        instance_ids:
+        - 0920582c7ff041399e34823a0be62549
+        - 0920582c7ff041399e34823a0be62549
+      properties:
+        instance_ids:
+          description: "The unique identifiers (IDs) of the launched instances. Note:\
+            \ if a quantity was specified, fewer than the requested quantity might\
+            \ have been launched."
+          items:
+            $ref: '#/components/schemas/instanceId'
+          type: array
+      required:
+      - instance_ids
+      type: object
+    InstanceTerminateInstanceResponse_data:
+      example:
+        terminated_instances:
+        - hostname: 10-0-8-196.cloud.lambdalabs.com
+          file_system_names:
+          - shared-fs
+          - shared-fs
+          ip: 10.10.10.1
+          name: training-node-1
+          id: 0920582c7ff041399e34823a0be62549
+          region:
+            name: us-tx-1
+            description: "Austin, Texas"
+          jupyter_url: https://jupyter-3ac4c5c6-9026-47d2-9a33-71efccbcd0ee.lambdaspaces.com/?token=53968f128c4a4489b688c2c0a181d083
+          instance_type:
+            specs:
+              memory_gib: 800
+              vcpus: 24
+              storage_gib: 512
+            name: gpu_1x_a100
+            description: 1x RTX A100 (24 GB)
+            price_cents_per_hour: 110
+          status: active
+          ssh_key_names:
+          - macbook-pro
+          - macbook-pro
+          jupyter_token: 53968f128c4a4489b688c2c0a181d083
+        - hostname: 10-0-8-196.cloud.lambdalabs.com
+          file_system_names:
+          - shared-fs
+          - shared-fs
+          ip: 10.10.10.1
+          name: training-node-1
+          id: 0920582c7ff041399e34823a0be62549
+          region:
+            name: us-tx-1
+            description: "Austin, Texas"
+          jupyter_url: https://jupyter-3ac4c5c6-9026-47d2-9a33-71efccbcd0ee.lambdaspaces.com/?token=53968f128c4a4489b688c2c0a181d083
+          instance_type:
+            specs:
+              memory_gib: 800
+              vcpus: 24
+              storage_gib: 512
+            name: gpu_1x_a100
+            description: 1x RTX A100 (24 GB)
+            price_cents_per_hour: 110
+          status: active
+          ssh_key_names:
+          - macbook-pro
+          - macbook-pro
+          jupyter_token: 53968f128c4a4489b688c2c0a181d083
+      properties:
+        terminated_instances:
+          description: "List of instances that were terminated. Note: this list might\
+            \ not contain all instances requested to be terminated."
+          items:
+            $ref: '#/components/schemas/instance'
+          type: array
+      required:
+      - terminated_instances
+      type: object
+    InstanceRestartInstancesResponse_data:
+      example:
+        restarted_instances:
+        - hostname: 10-0-8-196.cloud.lambdalabs.com
+          file_system_names:
+          - shared-fs
+          - shared-fs
+          ip: 10.10.10.1
+          name: training-node-1
+          id: 0920582c7ff041399e34823a0be62549
+          region:
+            name: us-tx-1
+            description: "Austin, Texas"
+          jupyter_url: https://jupyter-3ac4c5c6-9026-47d2-9a33-71efccbcd0ee.lambdaspaces.com/?token=53968f128c4a4489b688c2c0a181d083
+          instance_type:
+            specs:
+              memory_gib: 800
+              vcpus: 24
+              storage_gib: 512
+            name: gpu_1x_a100
+            description: 1x RTX A100 (24 GB)
+            price_cents_per_hour: 110
+          status: active
+          ssh_key_names:
+          - macbook-pro
+          - macbook-pro
+          jupyter_token: 53968f128c4a4489b688c2c0a181d083
+        - hostname: 10-0-8-196.cloud.lambdalabs.com
+          file_system_names:
+          - shared-fs
+          - shared-fs
+          ip: 10.10.10.1
+          name: training-node-1
+          id: 0920582c7ff041399e34823a0be62549
+          region:
+            name: us-tx-1
+            description: "Austin, Texas"
+          jupyter_url: https://jupyter-3ac4c5c6-9026-47d2-9a33-71efccbcd0ee.lambdaspaces.com/?token=53968f128c4a4489b688c2c0a181d083
+          instance_type:
+            specs:
+              memory_gib: 800
+              vcpus: 24
+              storage_gib: 512
+            name: gpu_1x_a100
+            description: 1x RTX A100 (24 GB)
+            price_cents_per_hour: 110
+          status: active
+          ssh_key_names:
+          - macbook-pro
+          - macbook-pro
+          jupyter_token: 53968f128c4a4489b688c2c0a181d083
+      properties:
+        restarted_instances:
+          description: "List of instances that were restarted. Note: this list might\
+            \ not contain all instances requested to be restarted."
+          items:
+            $ref: '#/components/schemas/instance'
+          type: array
+      required:
+      - restarted_instances
+      type: object
+  securitySchemes:
+    basicAuth:
+      description: "Basic HTTP authentication. Allowed headers-- `Authorization: Basic\
+        \ <base64 encoding of api_key>:` | `Authorization: Basic <api_key>`"
+      scheme: basic
+      type: http
+      x-konfig-globally-required-security: false
+    bearerAuth:
+      bearerFormat: auth-scheme
+      description: "Bearer HTTP authentication. Allowed headers-- `Authorization:\
+        \ Bearer <api_key>`"
+      scheme: bearer
+      type: http
+      x-konfig-globally-required-security: false
+
